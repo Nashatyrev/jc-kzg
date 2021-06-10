@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-%module "CKzg"
+%module "JcKzg"
 
 %include "exception.i"
 %include "std_string.i"
@@ -21,7 +21,6 @@
 %include "enums.swg"
 %include "arrays_java.i"
 %include "std_vector.i"
-//%include "windows.i"
 
 %template(G1Vector) std::vector<G1>;
 %template(G2Vector) std::vector<G2>;
@@ -29,10 +28,10 @@
 %template(LongVector) std::vector<int64_t>;
 
 %begin %{
-#include "../fft_common.hpp"
-#include "../kzg.hpp"
-#include "../bls12_381.hpp"
-#include "../poly.hpp"
+#include "fft_common.hpp"
+#include "kzg.hpp"
+#include "bls12_381.hpp"
+#include "poly.hpp"
 %}
 
 %include "fft_common.hpp"
