@@ -1,0 +1,6 @@
+[submodule "blst"]
+	path = blst
+	url = https://github.com/supranational/blst
+[submodule "c-kzg"]
+	path = c-kzg
+	url = https://github.com/benjaminion/c-kzg/
