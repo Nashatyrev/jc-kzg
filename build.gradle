@@ -1,14 +1,12 @@
 plugins {
-    id "com.jfrog.bintray" version "1.8.1"
     id 'maven-publish'
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
-apply plugin: 'com.jfrog.bintray'
 
 group = 'tech.pegasys'
-version = '0.2.0-RELEASE'
+version = '0.1.0-RELEASE'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -94,19 +92,3 @@ publishing {
         }
     }
 }
-
-bintray {
-    user = findProperty("bintrayUser")
-    key = findProperty("bintrayApiKey")
-    publish = true
-    setPublications("mavenJava")
-    setConfigurations("archives")
-    pkg {
-        userOrg = 'consensys'
-        repo = 'pegasys-repo'
-        name = 'jc-kzg'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Nashatyrev/jc-kzg'
-    }
-}
-
