@@ -11,7 +11,7 @@ public class JcKZG {
   );
 
   public static void loadNativeLibrary() throws UnsupportedOperationException {
-    String libLocation = "/" + getArch() + "/" + System.mapLibraryName("Cpp-KZG");
+    String libLocation = "/" + getArch() + "/" + System.mapLibraryName("jc-kzg");
     try {
       NativeUtils.loadLibraryFromJar(libLocation);
     } catch (Throwable e) {
