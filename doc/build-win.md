@@ -5,8 +5,9 @@ Prerequisites:
   - SWIG 4.x
   - JDK 11 or newer
 
-- Run 'x64 Native Tools Command Prompt for VS 2019' (`cmd.exe` with correctly set MSVC %PATH%)
+Run `x64 Native Tools Command Prompt for VS 2019` (`cmd.exe` with correctly set MSVC `%PATH%`)
 
+```cmd
 # build blst.lib
 > cd <repo-dir>
 > cd build.native
@@ -20,3 +21,4 @@ Prerequisites:
 > set JDK_DIR=<JDK directory containing 'include' subdirectory>
 > devenv msvc\jc-kzg.sln /Build Release
 > copy build.native\Release\jc-kzg.dll src\generated\resources\x86_64
+```
