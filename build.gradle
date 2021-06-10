@@ -13,6 +13,9 @@ version = '0.2.0-RELEASE'
 sourceCompatibility = 11
 targetCompatibility = 11
 
+sourceSets.main.java.srcDirs += 'src/generated/java'
+sourceSets.main.resources.srcDirs += 'src/generated/resources'
+
 repositories {
     jcenter()
     mavenCentral()
