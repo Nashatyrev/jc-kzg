@@ -16,6 +16,25 @@ The repository contains two submodules, so they need to be checked out
 
 ### Building JAR 
 
+```shell script
+> ./gradlew jar
+```
+
+### Publishing artifact locally 
+```shell script
+> ./gradlew publishToMavenLocal
+```
+
+# Dependency 
+
+```xml
+<dependency>
+  <groupId>tech.pegasys</groupId>
+  <artifactId>jc-kzg</artifactId>
+  <version>0.1.0-RELEASE</version>
+</dependency>
+```
+
 # Supported platforms
 - x86-64
   - Windows
