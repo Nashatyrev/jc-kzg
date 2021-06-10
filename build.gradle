@@ -1,0 +1,109 @@
+plugins {
+    id "com.jfrog.bintray" version "1.8.1"
+    id 'maven-publish'
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+
+group = 'tech.pegasys'
+version = '0.2.0-RELEASE'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+  compile 'com.google.guava:guava:18.0'
+
+  testImplementation 'org.assertj:assertj-core:3.16.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+test {
+    useJUnitPlatform()
+    reports {
+        junitXml.enabled = true
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+// To specify a license in the pom:
+install {
+  repositories.mavenInstaller {
+    pom.project {
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+    }
+  }
+}
+
+wrapper {
+    gradleVersion = "6.5.1"
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'tech.pegasys'
+            artifactId = 'jc-kzg'
+            version = project.version
+            pom {
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+            }
+
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = findProperty("bintrayUser")
+    key = findProperty("bintrayApiKey")
+    publish = true
+    setPublications("mavenJava")
+    setConfigurations("archives")
+    pkg {
+        userOrg = 'consensys'
+        repo = 'pegasys-repo'
+        name = 'jc-kzg'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Nashatyrev/jc-kzg'
+    }
+}
+
