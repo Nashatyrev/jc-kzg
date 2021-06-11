@@ -1,6 +1,7 @@
 extern "C" {
 #include "bls12_381.h"
 }
+#include <vector>
 
 class Poly;
 
