@@ -19,10 +19,6 @@ public:
 		free_kzg_settings(&settings);
 	}
 
-	void aaabbb() {
-		printf("aaabbb");
-	}
-
 	G1 commit_to_poly(Poly* poly) {
 		G1 ret;
 		::commit_to_poly(&ret.g1, &poly->_poly, &settings);
