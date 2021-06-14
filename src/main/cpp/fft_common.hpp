@@ -39,7 +39,7 @@ public:
         return std::vector<Fr>(ret, ret + samples.size());
     }
 
-    Poly* do_zero_poly_mul_partial(std::vector<int64_t> indices, int64_t stride) {
+    Poly* do_zero_poly_mul_partial(std::vector<long long> indices, int64_t stride) {
         Poly* ret = new Poly();
         ::do_zero_poly_mul_partial(&(ret->_poly), (uint64_t*)indices[0], indices.size(), stride, &settings);
         return ret;
