@@ -6,13 +6,29 @@ https://github.com/benjaminion/c-kzg/
 The repository contains two submodules, so they need to be checked out
 ```shell script
 > git clone <JC-KZZG repo>
+> cd jc-kzg
 > git submodule init
 > git submodule update
 ```
 # Building
 
 ### Building native part
-[Windows](doc/build-win.md)
+- [Windows](doc/build-win.md)
+- [Linux](doc/build-linux.md)
+
+### Testing the build
+
+```shell script
+> ./gradlew build 
+```
+
+The test(s) should pass:
+```
+> Task :test
+
+JcKZGTest > proofSingle() PASSED
+
+```
 
 ### Building JAR 
 
@@ -37,4 +53,5 @@ The repository contains two submodules, so they need to be checked out
 
 # Supported platforms
 - x86-64
-  - Windows
+  - Windows (tested on Win 10)
+  - Linux (tested on Ubuntu 18.04)

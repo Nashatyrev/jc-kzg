@@ -1,9 +1,9 @@
 Windows:
 ========
 Prerequisites: 
-  - MSVC 2019 (Community edition)
+  - MSVC 2019 (Community edition) + "C++ Clang tools for Windows" component
   - SWIG 4.x
-  - JDK 11 or newer
+  - JDK 11
 
 Run `x64 Native Tools Command Prompt for VS 2019` (`cmd.exe` with correctly set MSVC `%PATH%`)
 
@@ -14,7 +14,7 @@ Run `x64 Native Tools Command Prompt for VS 2019` (`cmd.exe` with correctly set 
 > ..\blst\build.bat
 
 :: generate C++ and Java SWIG wrappers
-> cd <repo-dir>
+> cd ..
 > swig.exe -c++ -java -outdir src\generated\java\tech\pegasys\jckzg\swig -o src\generated\cpp\jc-kzg.cpp -Isrc\main\cpp -package tech.pegasys.jckzg.swig src\main\swig\jc-kzg.swg
 
 :: build DLL
