@@ -25,7 +25,7 @@
 %template(G1Vector) std::vector<G1>;
 %template(G2Vector) std::vector<G2>;
 %template(FrVector) std::vector<Fr>;
-%template(LongVector) std::vector<int64_t>;
+%template(LongVector) std::vector<long long>;
 
 %begin %{
 #include "fft_common.hpp"
