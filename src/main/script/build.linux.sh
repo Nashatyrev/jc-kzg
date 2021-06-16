@@ -1,11 +1,22 @@
 #!/usr/bin/env sh
+set -e
 
-if [ ! -d "$JDK_DIR/include/jni.h" ]; then
+if [ ! -f "$JDK_DIR/include/jni.h" ]; then
   echo "The env variable JDK_DIR is not set or invalid: $JDK_DIR"
-  exit -1
+  exit
 fi
 
-REPO_DIR=$(dirname "$0")/../../..
+REPO_DIR="$(pwd -P )"
+
+if [ ! -d "$REPO_DIR/blst/src" ]; then
+  echo "Git 'blst' submodule missing: $REPO_DIR/blst/src"
+  exit
+fi
+
+if [ ! -d "$REPO_DIR/c-kzg/src" ]; then
+  echo "Git 'blst' submodule missing: $REPO_DIR/c-kzg/src"
+  exit
+fi
 
 # build blst.lib
 cd $REPO_DIR/build.native
