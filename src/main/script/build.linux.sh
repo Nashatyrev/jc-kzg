@@ -14,7 +14,7 @@ if [ ! -d "$REPO_DIR/blst/src" ]; then
 fi
 
 if [ ! -d "$REPO_DIR/c-kzg/src" ]; then
-  echo "Git 'blst' submodule missing: $REPO_DIR/c-kzg/src"
+  echo "Git 'c-kzg' submodule missing: $REPO_DIR/c-kzg/src"
   exit
 fi
 
