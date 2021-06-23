@@ -20,7 +20,7 @@ fi
 
 # build blst.lib
 cd $REPO_DIR/build.native
-../blst/build.sh -Wno-missing-braces
+../blst/build.sh -D__BLST_PORTABLE__ -Wno-missing-braces
 
 # build C-KZG static library
 cd $REPO_DIR/c-kzg/src/

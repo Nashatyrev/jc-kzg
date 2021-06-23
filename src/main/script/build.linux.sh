@@ -20,7 +20,7 @@ fi
 
 # build blst.lib
 cd $REPO_DIR/build.native
-../blst/build.sh
+../blst/build.sh -D__BLST_PORTABLE__
 
 # build C-KZG static library
 cd $REPO_DIR/c-kzg/src/

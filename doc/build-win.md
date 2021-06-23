@@ -11,7 +11,7 @@ Run `x64 Native Tools Command Prompt for VS 2019` (`cmd.exe` with correctly set 
 :: build blst.lib
 > cd <repo-dir>
 > cd build.native
-> ..\blst\build.bat
+> ..\blst\build.bat -D__BLST_PORTABLE__
 
 :: generate C++ and Java SWIG wrappers
 > cd ..
