@@ -15,6 +15,7 @@ The repository contains two submodules, so they need to be checked out
 ### Building native part
 - [Windows](doc/build-win.md)
 - [Linux](doc/build-linux.md)
+- [MacOS](doc/build-macos.md)
 
 ### Testing the build
 
@@ -55,3 +56,4 @@ JcKZGTest > proofSingle() PASSED
 - x86-64
   - Windows (tested on Win 10)
   - Linux (tested on Ubuntu 18.04)
+  - MacOS (tested on 10.15.7 Catalina)
