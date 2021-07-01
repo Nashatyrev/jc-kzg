@@ -3,12 +3,14 @@ extern "C" {
 }
 #include <vector>
 
+#include "exception.hpp"
+
 class Poly;
 
 #ifndef ___BLS12_381_HPP___
 #define ___BLS12_381_HPP___
 
-struct Fr {
+class Fr {
 	friend class Poly;
 	friend class CKZGSettings;
 	friend class CFFTSettings;
@@ -21,7 +23,7 @@ private:
 	Fr() {}
 	Fr(fr_t _fr) { fr = _fr; }
 
-	Fr(int64_t arr[]) {
+	Fr(int64_t arr[4]) {
 		fr_from_uint64s(&fr, (const uint64_t*) arr);
 	}
 
@@ -30,7 +32,7 @@ public:
 	static const Fr ONE;
 	static const Fr NULL_FR;
 
-	static Fr from_jlongs(int64_t arr[]) {
+	static Fr from_jlongs(int64_t arr[4]) {
 		return Fr(arr);
 	}
 
@@ -85,7 +87,7 @@ const Fr Fr::ZERO = Fr(fr_zero);
 const Fr Fr::ONE= Fr(fr_one);
 const Fr Fr::NULL_FR= Fr(fr_null);
 
-struct G1 {
+class G1 {
 	friend class Poly;
 	friend class CKZGSettings;
 private:
@@ -95,7 +97,7 @@ private:
 	G1(g1_t g1_) { g1 = g1_; }
 	G1(const byte arr[48]) {
 		blst_p1_affine p1_aff;
-		blst_p1_uncompress(&p1_aff, arr);
+		BLST_TRY(blst_p1_uncompress(&p1_aff, arr));
 		blst_p1_from_affine(&g1, &p1_aff);
 	}
 
@@ -140,7 +142,7 @@ const G1 G1::GENERATOR= G1(g1_generator);
 const G1 G1::NEGATIVE_GENERATOR= G1(g1_negative_generator);
 
 
-struct G2 {
+class G2 {
 	friend class Poly;
 	friend class CKZGSettings;
 private:
@@ -150,7 +152,7 @@ private:
 	G2(g2_t g2_) { g2 = g2_; }
 	G2(const byte arr[96]) {
 		blst_p2_affine p2_aff;
-		blst_p2_uncompress(&p2_aff, arr);
+		BLST_TRY(blst_p2_uncompress(&p2_aff, arr));
 		blst_p2_from_affine(&g2, &p2_aff);
 	}
 

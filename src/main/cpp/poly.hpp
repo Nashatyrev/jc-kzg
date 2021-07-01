@@ -3,6 +3,7 @@ extern "C" {
 }
 #include <vector>
 #include "bls12_381.hpp"
+#include "exception.hpp"
 
 #ifndef ___POLY_HPP___
 #define ___POLY_HPP___
@@ -17,11 +18,11 @@ private:
 public:
 
 	Poly(const int length) {
-		new_poly(&_poly, length);
+		CKZG_TRY(new_poly(&_poly, length));
 	}
 
 	Poly(std::vector<Fr> coeff) {
-		new_poly_with_coeffs(&_poly, (fr_t*)&coeff[0], coeff.size());
+		CKZG_TRY(new_poly_with_coeffs(&_poly, (fr_t*)&coeff[0], coeff.size()));
 	}
 	~Poly() {
 		free_poly(&_poly);
@@ -29,7 +30,7 @@ public:
 
 	Poly* long_div(Poly *divisor) {
 		Poly* ret = new Poly();
-		new_poly_long_div(&ret->_poly, &_poly, &divisor->_poly);
+		CKZG_TRY(new_poly_long_div(&ret->_poly, &_poly, &divisor->_poly));
 		return ret;
 	}
 

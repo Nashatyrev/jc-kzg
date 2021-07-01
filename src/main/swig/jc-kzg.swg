@@ -34,6 +34,14 @@
 #include "poly.hpp"
 %}
 
+// Allow C++ exceptions to be handled in Java
+%typemap(throws) KZGException {
+  jclass excep = jenv->FindClass("tech/pegasys/jckzg/JcKZGException");
+  if (excep)
+    jenv->ThrowNew(excep, $1.what().c_str());
+  return $null;
+}
+
 %include "fft_common.hpp"
 %include "kzg.hpp"
 %include "bls12_381.hpp"

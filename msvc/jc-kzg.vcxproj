@@ -89,7 +89,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\blst\bindings;..\src\main\cpp;..\c-kzg\src;$(JDK_DIR)\include;$(JDK_DIR)\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -106,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\blst\bindings;..\src\main\cpp;..\c-kzg\src;$(JDK_DIR)\include;$(JDK_DIR)\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -125,7 +125,7 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>..\blst\bindings;..\src\main\cpp;..\c-kzg\src;$(JDK_DIR)\include;$(JDK_DIR)\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +135,7 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>..\blst\bindings;..\src\main\cpp;..\c-kzg\src;$(JDK_DIR)\include;$(JDK_DIR)\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -152,6 +152,7 @@
     <ClInclude Include="..\c-kzg\src\utility.h" />
     <ClInclude Include="..\c-kzg\src\zero_poly.h" />
     <ClInclude Include="..\src\main\cpp\bls12_381.hpp" />
+    <ClInclude Include="..\src\main\cpp\exception.hpp" />
     <ClInclude Include="..\src\main\cpp\fft_common.hpp" />
     <ClInclude Include="..\src\main\cpp\kzg.hpp" />
     <ClInclude Include="..\src\main\cpp\poly.hpp" />
