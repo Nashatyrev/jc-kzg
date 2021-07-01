@@ -20,5 +20,5 @@ Run `x64 Native Tools Command Prompt for VS 2019` (`cmd.exe` with correctly set 
 :: build DLL
 > set JDK_DIR=<JDK directory containing 'include' subdirectory>
 > devenv msvc\jc-kzg.sln /Build Release
-> copy build.native\Release\jc-kzg.dll src\generated\resources\x86_64
+> copy /Y build.native\Release\jc-kzg.dll src\generated\resources\x86_64
 ```
