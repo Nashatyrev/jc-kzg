@@ -81,6 +81,11 @@ public:
 		fr_pow(&ret.fr, &fr, n);
 		return ret;
 	}
+	std::vector<long long> to_longs() {
+		long long ptr[4];
+		fr_to_uint64s((uint64_t*)ptr, &fr);
+		return std::vector<long long>(ptr, ptr + 4);
+	}
 };
 
 const Fr Fr::ZERO = Fr(fr_zero);
