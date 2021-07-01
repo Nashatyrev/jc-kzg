@@ -1,4 +1,5 @@
 extern "C" {
+#include "fft_fr.h"
 #include "fft_common.h"
 #include "c_kzg.h"
 #include "zero_poly.h"
@@ -27,6 +28,12 @@ public:
         free_fft_settings(&settings);
     }
 
+    std::vector<Fr> fft_fr(std::vector<Fr> vals, bool inverse) throw(KZGException) {
+        Fr* ret = new Fr[vals.size()];
+        CKZG_TRY(::fft_fr((fr_t*)ret, (fr_t*)&vals[0], inverse, vals.size(), &settings));
+        return std::vector<Fr>(ret, ret + vals.size());
+    }
+
     std::vector<Fr> das_fft_extentions(std::vector<Fr> vals) {
         Fr* ret = new Fr[vals.size()];
         std::copy(vals.begin(), vals.end(), ret);
@@ -44,6 +51,10 @@ public:
         Poly* ret = new Poly();
         CKZG_TRY(::do_zero_poly_mul_partial(&(ret->_poly), (uint64_t*)indices[0], indices.size(), stride, &settings));
         return ret;
+    }
+
+    long long max_width() {
+        return settings.max_width;
     }
 };
 
