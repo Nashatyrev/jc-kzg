@@ -100,7 +100,7 @@ private:
 
 	G1() {}
 	G1(g1_t g1_) { g1 = g1_; }
-	G1(const byte arr[48]) {
+	G1(const byte arr[48]) throw(KZGException) {
 		blst_p1_affine p1_aff;
 		BLST_TRY(blst_p1_uncompress(&p1_aff, arr));
 		blst_p1_from_affine(&g1, &p1_aff);
@@ -155,7 +155,7 @@ private:
 
 	G2() {}
 	G2(g2_t g2_) { g2 = g2_; }
-	G2(const byte arr[96]) {
+	G2(const byte arr[96]) throw(KZGException) {
 		blst_p2_affine p2_aff;
 		BLST_TRY(blst_p2_uncompress(&p2_aff, arr));
 		blst_p2_from_affine(&g2, &p2_aff);

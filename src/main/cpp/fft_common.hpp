@@ -43,7 +43,7 @@ public:
         return fft_fr(vals, true);
     }
 
-    std::vector<Fr> das_fft_extension(std::vector<Fr> vals) {
+    std::vector<Fr> das_fft_extension(std::vector<Fr> vals) throw(KZGException) {
         // TODO: memleak ?
         Fr* ret = new Fr[vals.size()];
         std::copy(vals.begin(), vals.end(), ret);
@@ -51,13 +51,13 @@ public:
         return std::vector<Fr>(ret, ret + vals.size());
     }
 
-    std::vector<Fr> recover_poly_from_samples(std::vector<Fr> samples) {
+    std::vector<Fr> recover_poly_from_samples(std::vector<Fr> samples) throw(KZGException) {
         Fr *ret = new Fr[samples.size()];
         CKZG_TRY(::recover_poly_from_samples((fr_t*)ret, (fr_t*)&samples[0], samples.size(), &settings));
         return std::vector<Fr>(ret, ret + samples.size());
     }
 
-    Poly* do_zero_poly_mul_partial(std::vector<long long> indices, int64_t stride) {
+    Poly* do_zero_poly_mul_partial(std::vector<long long> indices, int64_t stride) throw(KZGException) {
         Poly* ret = new Poly();
         CKZG_TRY(::do_zero_poly_mul_partial(&(ret->_poly), (uint64_t*)indices[0], indices.size(), stride, &settings));
         return ret;

@@ -17,18 +17,18 @@ private:
 	Poly() {}
 public:
 
-	Poly(const int length) {
+	Poly(const int length) throw(KZGException) {
 		CKZG_TRY(new_poly(&_poly, length));
 	}
 
-	Poly(std::vector<Fr> coeff) {
+	Poly(std::vector<Fr> coeff) throw(KZGException) {
 		CKZG_TRY(new_poly_with_coeffs(&_poly, (fr_t*)&coeff[0], coeff.size()));
 	}
 	~Poly() {
 		free_poly(&_poly);
 	}
 
-	Poly* long_div(Poly *divisor) {
+	Poly* long_div(Poly *divisor) throw(KZGException) {
 		Poly* ret = new Poly();
 		CKZG_TRY(new_poly_long_div(&ret->_poly, &_poly, &divisor->_poly));
 		return ret;
