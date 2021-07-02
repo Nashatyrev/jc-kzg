@@ -103,7 +103,7 @@ public class JcKZGTest {
         Stream.generate(Fr::getZERO)
             .limit(cfftSettings.max_width() / 2))
         .collect(Collectors.toList());
-    FrVector data = cfftSettings.fft_fr(new FrVector(poly), false);
+    FrVector data = cfftSettings.fft_fr(new FrVector(poly));
 
     FrVector samples = new FrVector(
         List.of(data.get(0), Fr.getNULL_FR(), Fr.getNULL_FR(), data.get(3)));
@@ -113,7 +113,7 @@ public class JcKZGTest {
       assertThat(recovered.get(i).equal(data.get(i))).isTrue();
     }
 
-    FrVector back = cfftSettings.fft_fr(recovered, true);
+    FrVector back = cfftSettings.fft_inverse_fr(recovered);
 
     for (int i = 0; i < poly.size(); i++) {
       assertThat(back.get(i).equal(poly.get(i))).isTrue();

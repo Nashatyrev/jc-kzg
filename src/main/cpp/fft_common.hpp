@@ -19,6 +19,13 @@ friend class CKZGSettings;
 
 private:
     FFTSettings settings;
+
+    std::vector<Fr> fft_fr(std::vector<Fr> vals, bool inverse) throw(KZGException) {
+        Fr* ret = new Fr[vals.size()];
+        CKZG_TRY(::fft_fr((fr_t*)ret, (fr_t*)&vals[0], inverse, vals.size(), &settings));
+        return std::vector<Fr>(ret, ret + vals.size());
+    }
+
 public:
     CFFTSettings(unsigned int max_scale) throw(KZGException) {
         CKZG_TRY(new_fft_settings(&settings, max_scale));
@@ -28,13 +35,16 @@ public:
         free_fft_settings(&settings);
     }
 
-    std::vector<Fr> fft_fr(std::vector<Fr> vals, bool inverse) throw(KZGException) {
-        Fr* ret = new Fr[vals.size()];
-        CKZG_TRY(::fft_fr((fr_t*)ret, (fr_t*)&vals[0], inverse, vals.size(), &settings));
-        return std::vector<Fr>(ret, ret + vals.size());
+    std::vector<Fr> fft_fr(std::vector<Fr> vals) throw(KZGException) {
+        return fft_fr(vals, false);
     }
 
-    std::vector<Fr> das_fft_extentions(std::vector<Fr> vals) {
+    std::vector<Fr> fft_inverse_fr(std::vector<Fr> vals) throw(KZGException) {
+        return fft_fr(vals, true);
+    }
+
+    std::vector<Fr> das_fft_extension(std::vector<Fr> vals) {
+        // TODO: memleak ?
         Fr* ret = new Fr[vals.size()];
         std::copy(vals.begin(), vals.end(), ret);
         CKZG_TRY(::das_fft_extension((fr_t*)ret, vals.size(), &settings));
