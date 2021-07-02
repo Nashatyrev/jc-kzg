@@ -121,6 +121,78 @@ public class JcKZGTest {
   }
 
   @Test
+  void dasExtensionTestKnown() {
+    long[][] expected_u = {
+      {0xa0c43757db972d7dL, 0x79d15a1e0677962cL, 0xf678865c0c95fa6aL, 0x4e85fd4814f96825L},
+      {0xad9f844939f2705dL, 0x319e440c9f3b0325L, 0x4cbd29a60e160a28L, 0x665961d85d90c4c0L},
+      {0x5f3ac8a72468d28bL, 0xede949e28383c5d2L, 0xaf6f84dd8708d8c9L, 0x2567aa0b14a41521L},
+      {0x25abe312b96aadadL, 0x4abf043f091ff417L, 0x43824b53e09536dbL, 0x195dbe06a28ca227L},
+      {0x5f3ac8a72468d28bL, 0xede949e28383c5d2L, 0xaf6f84dd8708d8c9L, 0x2567aa0b14a41521L},
+      {0xad9f844939f2705dL, 0x319e440c9f3b0325L, 0x4cbd29a60e160a28L, 0x665961d85d90c4c0L},
+      {0xa0c43757db972d7dL, 0x79d15a1e0677962cL, 0xf678865c0c95fa6aL, 0x4e85fd4814f96825L},
+      {0x7f171458d2b071a9L, 0xd185bbb2a46cbd9bL, 0xa41aab0d02886e80L, 0x01cacceef58ccee9L}};
+
+    CFFTSettings fs = new CFFTSettings(4);
+    int half = (int) (fs.max_width() / 2);
+
+    List<Fr> frs = IntStream.range(0, half)
+        .mapToObj(i -> Fr.from_jlongs(new long[]{i, 0, 0, 0}))
+        .collect(Collectors.toList());
+    FrVector data = new FrVector(frs);
+
+    FrVector extension = fs.das_fft_extension(data);
+
+    for (int i = 0; i < 8; i++) {
+      Fr expectedFr = Fr.from_jlongs(expected_u[i]);
+      assertThat(extension.get(i).equal(expectedFr)).isTrue();
+    }
+  }
+
+  private FrVector slowDasFftExtension(CFFTSettings cfftSettings, FrVector data) {
+    FrVector poly = cfftSettings.fft_inverse_fr(data);
+    FrVector polyEx = new FrVector(
+        Stream.concat(poly.stream(), Stream.generate(Fr::getZERO).limit(poly.size()))
+            .collect(Collectors.toList()));
+    FrVector ret = cfftSettings.fft_fr(polyEx);
+    return new FrVector(IntStream.range(0, ret.size())
+        .filter(i -> i % 2 != 0)
+        .mapToObj(ret::get)
+        .collect(Collectors.toList()));
+  }
+
+  @Test
+  void dasExtensionTest() {
+
+    CFFTSettings cfftSettings = new CFFTSettings(5);
+
+    long[] dataArr = new long[]{1, 2, 3, 4, 7, 7, 7, 7, 13, 13, 13, 13, 13, 13, 13, 13};
+
+    List<Fr> frDataList = Arrays.stream(dataArr)
+        .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
+        .collect(Collectors.toList());
+
+    FrVector evenData = new FrVector(frDataList);
+    FrVector oddData = cfftSettings.das_fft_extension(evenData);
+//    FrVector oddData = slowDasFftExtension(cfftSettings, evenData);
+    List<Fr> allSamples = IntStream
+        .range(0, evenData.size() * 2)
+        .mapToObj(i -> i % 2 == 0 ? evenData.get(i / 2) : oddData.get(i / 2))
+        .collect(Collectors.toList());
+
+    List<Fr> someSamples = IntStream
+        .range(0, allSamples.size())
+        .mapToObj(i -> i % 3 == 0 ? Fr.getNULL_FR() : allSamples.get(i))
+        .collect(Collectors.toList());
+    FrVector restoredData = cfftSettings.recover_poly_from_samples(new FrVector(someSamples));
+
+    assertThat(restoredData).hasSize(allSamples.size());
+
+    for (int i = 0; i < allSamples.size(); i++) {
+      assertThat(restoredData.get(i).equal(allSamples.get(i))).isTrue();
+    }
+  }
+
+  @Test
   void newCFFTSettings_hugeScaleShouldCauseException() {
     assertThatThrownBy(() -> new CFFTSettings(32)).isInstanceOf(JcKZGException.class);
   }
