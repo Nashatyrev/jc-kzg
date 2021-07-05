@@ -21,9 +21,9 @@ private:
     FFTSettings settings;
 
     std::vector<Fr> fft_fr(std::vector<Fr> vals, bool inverse) throw(KZGException) {
-        Fr* ret = new Fr[vals.size()];
-        CKZG_TRY(::fft_fr((fr_t*)ret, (fr_t*)&vals[0], inverse, vals.size(), &settings));
-        return std::vector<Fr>(ret, ret + vals.size());
+        std::vector<Fr> r(vals.size());
+        CKZG_TRY(::fft_fr((fr_t*)&r[0], (fr_t*)&vals[0], inverse, vals.size(), &settings));
+        return r;
     }
 
 public:

@@ -20,7 +20,6 @@ class Fr {
 private: 
 	fr_t fr;
 
-	Fr() {}
 	Fr(fr_t _fr) { fr = _fr; }
 
 	Fr(int64_t arr[4]) {
@@ -35,6 +34,8 @@ public:
 	static Fr from_jlongs(int64_t arr[4]) {
 		return Fr(arr);
 	}
+
+	Fr() {}
 
 	bool is_zero() { return fr_is_zero(&fr); }
 	bool is_one() { return fr_is_one(&fr); }
@@ -82,9 +83,9 @@ public:
 		return ret;
 	}
 	std::vector<long long> to_longs() {
-		long long ptr[4];
-		fr_to_uint64s((uint64_t*)ptr, &fr);
-		return std::vector<long long>(ptr, ptr + 4);
+		std::vector<long long> ret(4);
+		fr_to_uint64s((uint64_t*)&ret[0], &fr);
+		return ret;
 	}
 };
 

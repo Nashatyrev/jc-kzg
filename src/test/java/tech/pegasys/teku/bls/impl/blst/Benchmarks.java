@@ -80,7 +80,8 @@ public class Benchmarks {
   @Test
   void longRunningMemLeakTest() {
     while (true) {
-//      JcKZGTest.slowDasFftExtension(cfftSettings, data);
+      FrVector frs2 = JcKZGTest.slowDasFftExtension(cfftSettings, data);
+      frs2.delete();
       FrVector frs = cfftSettings.das_fft_extension(data);
       frs.delete();
       FrVector frs1 = cfftSettings.recover_poly_from_samples(someSamples);

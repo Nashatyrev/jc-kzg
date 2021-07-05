@@ -149,15 +149,25 @@ public class JcKZGTest {
   }
 
   static FrVector slowDasFftExtension(CFFTSettings cfftSettings, FrVector data) {
-    FrVector poly = cfftSettings.fft_inverse_fr(data);
-    FrVector polyEx = new FrVector(
-        Stream.concat(poly.stream(), Stream.generate(Fr::getZERO).limit(poly.size()))
-            .collect(Collectors.toList()));
-    FrVector ret = cfftSettings.fft_fr(polyEx);
-    return new FrVector(IntStream.range(0, ret.size())
-        .filter(i -> i % 2 != 0)
-        .mapToObj(ret::get)
-        .collect(Collectors.toList()));
+    FrVector poly = null;
+    FrVector polyEx = null;
+    FrVector fullData = null;
+
+    try {
+      poly = cfftSettings.fft_inverse_fr(data);
+      polyEx = new FrVector(
+          Stream.concat(poly.stream(), Stream.generate(Fr::getZERO).limit(poly.size()))
+              .collect(Collectors.toList()));
+      fullData = cfftSettings.fft_fr(polyEx);
+      return new FrVector(IntStream.range(0, fullData.size())
+          .filter(i -> i % 2 != 0)
+          .mapToObj(fullData::get)
+          .collect(Collectors.toList()));
+    } finally {
+      if (poly != null) poly.delete();
+      if (polyEx != null) polyEx.delete();
+      if (fullData != null) fullData.delete();
+    }
   }
 
   @Test
