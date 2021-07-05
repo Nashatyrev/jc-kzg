@@ -30,7 +30,7 @@ public:
 
 	Poly* long_div(Poly *divisor) throw(KZGException) {
 		Poly* ret = new Poly();
-		CKZG_TRY(new_poly_long_div(&ret->_poly, &_poly, &divisor->_poly));
+		CKZG_TRY(::poly_long_div(&ret->_poly, &_poly, &divisor->_poly));
 		return ret;
 	}
 
