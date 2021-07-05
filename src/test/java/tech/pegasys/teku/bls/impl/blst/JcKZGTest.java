@@ -148,7 +148,7 @@ public class JcKZGTest {
     }
   }
 
-  private FrVector slowDasFftExtension(CFFTSettings cfftSettings, FrVector data) {
+  static FrVector slowDasFftExtension(CFFTSettings cfftSettings, FrVector data) {
     FrVector poly = cfftSettings.fft_inverse_fr(data);
     FrVector polyEx = new FrVector(
         Stream.concat(poly.stream(), Stream.generate(Fr::getZERO).limit(poly.size()))
