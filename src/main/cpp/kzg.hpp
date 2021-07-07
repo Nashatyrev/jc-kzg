@@ -1,3 +1,6 @@
+#ifndef ___KZG_HPP___
+#define ___KZG_HPP___
+
 extern "C" {
 	#include "kzg_proofs.h"
 }
@@ -8,6 +11,9 @@ extern "C" {
 #include <vector>
 
 class KZG {
+friend class FK20Single;
+friend class FK20Multi;
+
 private:
 	KZGSettings settings;
 
@@ -42,8 +48,11 @@ public:
 		return ret;
 	}
 	bool check_proof_multi(G1 commitment, G1 proof, Fr x, std::vector<Fr> ys) throw(KZGException) {
+		CKZG_TRY(ys.size() > 0 ? C_KZG_OK : C_KZG_BADARGS);
 		bool ret;
 		CKZG_TRY(::check_proof_multi(&ret, &commitment.g1, &proof.g1, &x.fr, (fr_t*)&ys[0], ys.size(), &settings));
 		return ret;
 	}
 };
+
+#endif // !define ___KZG_HPP___

@@ -11,8 +11,8 @@ extern "C" {
 #include "bls12_381.hpp"
 #include "exception.hpp"
 
-#ifndef ___FFT_COMMON_HPP___
-#define ___FFT_COMMON_HPP___
+#ifndef ___FFT_HPP___
+#define ___FFT_HPP___
 
 class FFT {
 friend class KZG;
@@ -33,6 +33,10 @@ public:
 
     ~FFT() {
         free_fft_settings(&settings);
+    }
+
+    Fr expanded_root_of_unity(int index) {
+        return settings.expanded_roots_of_unity[index];
     }
 
     std::vector<Fr> fft_fr(std::vector<Fr> vals) throw(KZGException) {
@@ -66,4 +70,4 @@ public:
     }
 };
 
-#endif // !___FFT_COMMON_HPP___
+#endif // !___FFT_HPP___

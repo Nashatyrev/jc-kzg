@@ -30,6 +30,7 @@
 %begin %{
 #include "fft.hpp"
 #include "kzg.hpp"
+#include "fk20.hpp"
 #include "bls12_381.hpp"
 #include "poly.hpp"
 %}
@@ -42,7 +43,29 @@
   return $null;
 }
 
+%typemap(javacode) Fr %{
+  public boolean equals(Object obj) {
+    if (obj instanceof $javaclassname)
+      return (($javaclassname)obj).equal(this);
+    else
+      return false;
+  }
+
+  @Override
+  public String toString() {
+    LongVector longs = to_longs();
+    return String.format("Fr[%016X %016X %016X %016X]",
+        longs.get(0), longs.get(1), longs.get(2), longs.get(3)) ;
+  }
+%}
+
+%ignore FK20Single;
+%ignore FK20Multi;
+%ignore Fr::Fr();
+%ignore G1::G1();
+
 %include "fft.hpp"
 %include "kzg.hpp"
+%include "fk20.hpp"
 %include "bls12_381.hpp"
 %include "poly.hpp"

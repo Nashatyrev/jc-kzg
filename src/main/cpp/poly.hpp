@@ -11,6 +11,8 @@ extern "C" {
 class Poly {
 	friend class KZG;
 	friend class FFT;
+	friend class FK20Single;
+	friend class FK20Multi;
 private:
 	poly _poly;
 
@@ -38,6 +40,10 @@ public:
 		Fr ret;
 		eval_poly(&ret.fr, &_poly, &x.fr);
 		return ret;
+	}
+
+	long long length() {
+		return _poly.length;
 	}
 };
 

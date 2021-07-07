@@ -3,10 +3,12 @@ package tech.pegasys.teku.bls.impl.blst;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import tech.pegasys.jckzg.JcKZG;
 import tech.pegasys.jckzg.JcKZGException;
 import tech.pegasys.jckzg.swig.FFT;
+import tech.pegasys.jckzg.swig.FK20;
 import tech.pegasys.jckzg.swig.KZG;
 import tech.pegasys.jckzg.swig.Fr;
 import tech.pegasys.jckzg.swig.FrVector;
@@ -205,5 +208,121 @@ public class JcKZGTest {
   @Test
   void newFFT_hugeScaleShouldCauseException() {
     assertThatThrownBy(() -> new FFT(32)).isInstanceOf(JcKZGException.class);
+  }
+
+  @Test
+  void fk20ProofSingle() {
+    long[] coeffs = new long[]{1, 2, 3, 4, 7, 7, 7, 7, 13, 13, 13, 13, 13, 13, 13, 13};
+    int polyLen = coeffs.length;
+    int n = 5;
+    int secretsLen = (1<< n) + 1;
+
+    List<Fr> frCoeffs = Arrays.stream(coeffs)
+        .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
+        .collect(Collectors.toList());
+    Poly poly = new Poly(new FrVector(frCoeffs));
+
+    Pair<G1Vector, G2Vector> trustedSetup = TestUtils
+        .generateTrustedSetup(TestUtils.SECRET, secretsLen);
+    G1Vector s1 = trustedSetup.getLeft();
+    G2Vector s2 = trustedSetup.getRight();
+
+    FFT fft = new FFT(n);
+    KZG kzg = new KZG(fft, s1, s2);
+    FK20 fk20 = FK20.create_single(kzg, 2 * polyLen);
+
+    G1 commitment = kzg.commit_to_poly(poly);
+
+    G1Vector proofs = fk20.da_calc_proofs(poly);
+
+    for (int i = 0; i < 2 * polyLen; i++) {
+      Fr x1 = fft.expanded_root_of_unity(i);
+      Fr y1 = poly.eval(x1);
+      G1 proof = proofs.get(reverseBitOrder(i, polyLen * 2));
+      assertThat(kzg.check_proof_single(commitment, proof, x1, y1)).isTrue();
+      proofs.stream()
+          .filter(p -> !p.equal(proof))
+          .forEach(wrongProof ->
+              assertThat(kzg.check_proof_single(commitment, wrongProof, x1, y1)).isFalse());
+    }
+  }
+
+  @Test
+  void fk20ProofMulti() {
+    int chunkLen = 16;
+    int chunkCount = 32;
+    int n = chunkLen * chunkCount;
+    long[] coeffs = LongStream.range(1, n + 1).toArray();
+    int polyLen = coeffs.length;
+    int secretsLen = n * 2;
+
+    System.out.println("Started");
+
+    List<Fr> frCoeffs = Arrays.stream(coeffs)
+        .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
+        .collect(Collectors.toList());
+    Poly poly = new Poly(new FrVector(frCoeffs));
+
+    Pair<G1Vector, G2Vector> trustedSetup = TestUtils
+        .generateTrustedSetup(TestUtils.SECRET, secretsLen);
+    G1Vector s1 = trustedSetup.getLeft();
+    G2Vector s2 = trustedSetup.getRight();
+    System.out.println("Secret vectors generated");
+
+    FFT fft = new FFT(4 + 5 + 1);
+    System.out.println("FFT created.");
+    KZG kzg = new KZG(fft, s1, s2);
+    System.out.println("KZG created.");
+    FK20 fk20 = FK20.create_multi(kzg, 2 * polyLen, chunkLen);
+    System.out.println("FK20 created.");
+
+    G1 commitment = kzg.commit_to_poly(poly);
+    System.out.println("Poly commitment calculated.");
+
+    G1Vector proofs = fk20.da_calc_proofs(poly);
+    System.out.println("Proofs calculated.");
+
+    List<Fr> extendedCoeffs = Stream.concat(
+        frCoeffs.stream(),
+        Stream.generate(Fr::getZERO).limit(frCoeffs.size())
+    ).collect(Collectors.toList());
+    FrVector extendedCoeffsFftOrdered = fft.fft_fr(new FrVector(extendedCoeffs));
+    List<Fr> extendedCoeffsFft = reverseBitOrderList(extendedCoeffsFftOrdered);
+
+    int domainStride = (int) (fft.max_width() / (2 * n));
+
+    for (int pos = 0; pos < 2 * chunkCount; pos++) {
+      int domainPos = reverseBitOrder(pos, 2 * chunkCount);
+      Fr x = fft.expanded_root_of_unity(domainPos * domainStride);
+
+      // The ys from the extended coeffients
+      List<Fr> ysOrdered = extendedCoeffsFft.subList(chunkLen * pos, chunkLen * (pos + 1));
+      List<Fr> ys = reverseBitOrderList(ysOrdered);
+
+      // Now recreate the ys by evaluating the polynomial in the sub-domain range
+      int stride = (int) (fft.max_width() / chunkLen);
+      List<Fr> ys2 = IntStream.range(0, chunkLen)
+          .mapToObj(i -> poly.eval(x.mul(fft.expanded_root_of_unity(i * stride))))
+          .collect(Collectors.toList());
+
+      assertThat(ys).isEqualTo(ys2);
+
+      assertThat(kzg.check_proof_multi(commitment, proofs.get(pos), x, new FrVector(ys))).isTrue();
+    }
+  }
+
+  public static <C> List<C> reverseBitOrderList(List<C> list) {
+    List<C> ret = new ArrayList<>(list.size());
+    for (int i = 0; i < list.size(); i++) {
+      ret.add(list.get(reverseBitOrder(i, list.size())));
+    }
+    return ret;
+  }
+
+  public static int reverseBitOrder(int n, int order) {
+    return Integer.reverse(n) >>> (32 - log2(order));
+  }
+  static int log2(int i) {
+    return Integer.bitCount(i - 1);
   }
 }

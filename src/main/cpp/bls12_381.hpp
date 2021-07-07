@@ -96,10 +96,11 @@ const Fr Fr::NULL_FR= Fr(fr_null);
 class G1 {
 	friend class Poly;
 	friend class KZG;
+	friend class FK20Single;
+	friend class FK20Multi;
 private:
 	g1_t g1;
 
-	G1() {}
 	G1(g1_t g1_) { g1 = g1_; }
 	G1(const byte arr[48]) throw(KZGException) {
 		blst_p1_affine p1_aff;
@@ -114,6 +115,8 @@ public:
 	static G1 from_compressed(const signed char arr[48]) {
 		return G1((byte*)arr);
 	}
+	G1() {}
+
 	bool is_inf() { return g1_is_inf(&g1); };
 	G1 dbl() {
 		G1 ret;
