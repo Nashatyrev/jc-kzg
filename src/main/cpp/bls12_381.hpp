@@ -12,8 +12,8 @@ class Poly;
 
 class Fr {
 	friend class Poly;
-	friend class CKZGSettings;
-	friend class CFFTSettings;
+	friend class KZG;
+	friend class FFT;
 	friend class G1;
 	friend class G2;
 
@@ -95,7 +95,7 @@ const Fr Fr::NULL_FR= Fr(fr_null);
 
 class G1 {
 	friend class Poly;
-	friend class CKZGSettings;
+	friend class KZG;
 private:
 	g1_t g1;
 
@@ -150,7 +150,7 @@ const G1 G1::NEGATIVE_GENERATOR= G1(g1_negative_generator);
 
 class G2 {
 	friend class Poly;
-	friend class CKZGSettings;
+	friend class KZG;
 private:
 	g2_t g2;
 

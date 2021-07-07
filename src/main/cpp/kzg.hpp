@@ -1,22 +1,22 @@
 extern "C" {
 	#include "kzg_proofs.h"
 }
-#include "fft_common.hpp"
+#include "fft.hpp"
 #include "bls12_381.hpp"
 #include "poly.hpp"
 #include "exception.hpp"
 #include <vector>
 
-class CKZGSettings {
+class KZG {
 private:
 	KZGSettings settings;
 
 public:
-	CKZGSettings(CFFTSettings* fft_settings, std::vector<G1> g1_secrets, std::vector<G2> g2_secrets) throw(KZGException) {
+	KZG(FFT* fft_settings, std::vector<G1> g1_secrets, std::vector<G2> g2_secrets) throw(KZGException) {
 		// TODO check g1_secrets.size() == g2_secrets.size()
 		CKZG_TRY(new_kzg_settings(&settings, (g1_t*)&g1_secrets[0], (g2_t*)&g2_secrets[0], g1_secrets.size(), &fft_settings->settings));
 	}
-	~CKZGSettings() {
+	~KZG() {
 		free_kzg_settings(&settings);
 	}
 

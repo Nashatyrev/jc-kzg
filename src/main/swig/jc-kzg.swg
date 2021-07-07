@@ -28,7 +28,7 @@
 %template(LongVector) std::vector<long long>;
 
 %begin %{
-#include "fft_common.hpp"
+#include "fft.hpp"
 #include "kzg.hpp"
 #include "bls12_381.hpp"
 #include "poly.hpp"
@@ -42,7 +42,7 @@
   return $null;
 }
 
-%include "fft_common.hpp"
+%include "fft.hpp"
 %include "kzg.hpp"
 %include "bls12_381.hpp"
 %include "poly.hpp"

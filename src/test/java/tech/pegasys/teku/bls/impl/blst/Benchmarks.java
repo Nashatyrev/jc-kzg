@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import tech.pegasys.jckzg.JcKZG;
-import tech.pegasys.jckzg.swig.CFFTSettings;
+import tech.pegasys.jckzg.swig.FFT;
 import tech.pegasys.jckzg.swig.Fr;
 import tech.pegasys.jckzg.swig.FrVector;
 
@@ -19,20 +19,20 @@ public class Benchmarks {
 
   static FrVector data;
   static FrVector someSamples;
-  static CFFTSettings cfftSettings;
+  static FFT FFT;
 
   @BeforeAll
   static void setup() {
     JcKZG.loadNativeLibrary();
 
-    cfftSettings = new CFFTSettings(scale);
+    FFT = new FFT(scale);
 
-    data = new FrVector(LongStream.range(0, cfftSettings.max_width() / 2)
+    data = new FrVector(LongStream.range(0, FFT.max_width() / 2)
         .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
         .collect(Collectors.toList()));
 
-    FrVector oddData = cfftSettings.das_fft_extension(data);
-//    FrVector oddData = slowDasFftExtension(cfftSettings, evenData);
+    FrVector oddData = FFT.das_fft_extension(data);
+//    FrVector oddData = slowDasFftExtension(FFT, evenData);
     List<Fr> allSamples = IntStream
         .range(0, data.size() * 2)
         .mapToObj(i -> i % 2 == 0 ? data.get(i / 2) : oddData.get(i / 2))
@@ -49,7 +49,7 @@ public class Benchmarks {
     while (true) {
       long s = System.currentTimeMillis();
       for (int i = 0; i < 100; i++) {
-        JcKZGTest.slowDasFftExtension(cfftSettings, data);
+        JcKZGTest.slowDasFftExtension(FFT, data);
       }
       System.out.println("Time: " + (System.currentTimeMillis() - s));
     }
@@ -60,7 +60,7 @@ public class Benchmarks {
     while (true) {
       long s = System.currentTimeMillis();
       for (int i = 0; i < 100; i++) {
-        cfftSettings.das_fft_extension(data);
+        FFT.das_fft_extension(data);
       }
       System.out.println("Time: " + (System.currentTimeMillis() - s));
     }
@@ -71,7 +71,7 @@ public class Benchmarks {
     while (true) {
       long s = System.currentTimeMillis();
       for (int i = 0; i < 1; i++) {
-        cfftSettings.recover_poly_from_samples(someSamples);
+        FFT.recover_poly_from_samples(someSamples);
       }
       System.out.println("Time: " + (System.currentTimeMillis() - s));
     }
@@ -80,11 +80,11 @@ public class Benchmarks {
   @Test
   void longRunningMemLeakTest() {
     while (true) {
-      FrVector frs2 = JcKZGTest.slowDasFftExtension(cfftSettings, data);
+      FrVector frs2 = JcKZGTest.slowDasFftExtension(FFT, data);
       frs2.delete();
-      FrVector frs = cfftSettings.das_fft_extension(data);
+      FrVector frs = FFT.das_fft_extension(data);
       frs.delete();
-      FrVector frs1 = cfftSettings.recover_poly_from_samples(someSamples);
+      FrVector frs1 = FFT.recover_poly_from_samples(someSamples);
       frs1.delete();
     }
   }

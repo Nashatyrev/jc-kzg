@@ -146,6 +146,7 @@
     <ClInclude Include="..\c-kzg\src\fft_common.h" />
     <ClInclude Include="..\c-kzg\src\fft_fr.h" />
     <ClInclude Include="..\c-kzg\src\fft_g1.h" />
+    <ClInclude Include="..\c-kzg\src\fk20_proofs.h" />
     <ClInclude Include="..\c-kzg\src\kzg_proofs.h" />
     <ClInclude Include="..\c-kzg\src\poly.h" />
     <ClInclude Include="..\c-kzg\src\recover.h" />
@@ -153,7 +154,8 @@
     <ClInclude Include="..\c-kzg\src\zero_poly.h" />
     <ClInclude Include="..\src\main\cpp\bls12_381.hpp" />
     <ClInclude Include="..\src\main\cpp\exception.hpp" />
-    <ClInclude Include="..\src\main\cpp\fft_common.hpp" />
+    <ClInclude Include="..\src\main\cpp\fft.hpp" />
+    <ClInclude Include="..\src\main\cpp\fk20.hpp" />
     <ClInclude Include="..\src\main\cpp\kzg.hpp" />
     <ClInclude Include="..\src\main\cpp\poly.hpp" />
   </ItemGroup>
@@ -164,6 +166,7 @@
     <ClCompile Include="..\c-kzg\src\fft_common.c" />
     <ClCompile Include="..\c-kzg\src\fft_fr.c" />
     <ClCompile Include="..\c-kzg\src\fft_g1.c" />
+    <ClCompile Include="..\c-kzg\src\fk20_proofs.c" />
     <ClCompile Include="..\c-kzg\src\kzg_proofs.c" />
     <ClCompile Include="..\c-kzg\src\poly.c" />
     <ClCompile Include="..\c-kzg\src\recover.c" />

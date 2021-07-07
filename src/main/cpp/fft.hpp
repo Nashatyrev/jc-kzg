@@ -14,8 +14,8 @@ extern "C" {
 #ifndef ___FFT_COMMON_HPP___
 #define ___FFT_COMMON_HPP___
 
-class CFFTSettings {
-friend class CKZGSettings;
+class FFT {
+friend class KZG;
 
 private:
     FFTSettings settings;
@@ -27,11 +27,11 @@ private:
     }
 
 public:
-    CFFTSettings(unsigned int max_scale) throw(KZGException) {
+    FFT(unsigned int max_scale) throw(KZGException) {
         CKZG_TRY(new_fft_settings(&settings, max_scale));
     }
 
-    ~CFFTSettings() {
+    ~FFT() {
         free_fft_settings(&settings);
     }
 

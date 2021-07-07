@@ -9,8 +9,8 @@ extern "C" {
 #define ___POLY_HPP___
 
 class Poly {
-	friend class CKZGSettings;
-	friend class CFFTSettings;
+	friend class KZG;
+	friend class FFT;
 private:
 	poly _poly;
 
