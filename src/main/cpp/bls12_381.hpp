@@ -112,7 +112,7 @@ public:
 	static const G1 IDENTITY;
 	static const G1 GENERATOR;
 	static const G1 NEGATIVE_GENERATOR;
-	static G1 from_compressed(const signed char arr[48]) {
+	static G1 from_compressed(const signed char arr[48]) throw(KZGException) {
 		return G1((byte*)arr);
 	}
 	G1() {}
