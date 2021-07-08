@@ -311,6 +311,14 @@ public class JcKZGTest {
     }
   }
 
+  @Test
+  void g1_fromToCompressedRoundtrip() {
+    byte[] bytes = new byte[48];
+    G1.getGENERATOR().to_compressed(bytes);
+    G1 g1 = G1.from_compressed(bytes);
+    assertThat(g1.equal(G1.getGENERATOR())).isTrue();
+  }
+
   public static <C> List<C> reverseBitOrderList(List<C> list) {
     List<C> ret = new ArrayList<>(list.size());
     for (int i = 0; i < list.size(); i++) {

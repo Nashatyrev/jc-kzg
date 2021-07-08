@@ -144,6 +144,9 @@ public:
 		g1_linear_combination(&ret.g1, &g1, (fr_t*)&coeffs[0], coeffs.size());
 		return ret;
 	}
+	void to_compressed(signed char out[48]) {
+		blst_p1_compress((byte*)out, &g1);
+	}
 };
 
 const G1 G1::IDENTITY = G1(g1_identity);
