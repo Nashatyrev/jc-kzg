@@ -59,6 +59,14 @@
   }
 %}
 
+%typemap(javacode) G1 %{
+  public byte[] to_compressed() {
+    byte[] bytes = new byte[48];
+    to_compressed(bytes);
+    return bytes;
+  }
+%}
+
 %ignore FK20Single;
 %ignore FK20Multi;
 %ignore Fr::Fr();
