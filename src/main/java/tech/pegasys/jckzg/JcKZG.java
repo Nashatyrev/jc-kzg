@@ -9,14 +9,19 @@ public class JcKZG {
       "amd64", "x86_64",
       "aarch64", "aarch64"
   );
+  private static boolean loaded = false;
 
-  public static void loadNativeLibrary() throws UnsupportedOperationException {
+  public static synchronized void loadNativeLibrary() throws UnsupportedOperationException {
+    if (loaded) {
+      return;
+    }
     String libLocation = "/" + getArch() + "/" + System.mapLibraryName("jc-kzg");
     try {
       NativeUtils.loadLibraryFromJar(libLocation);
+      loaded = true;
     } catch (Throwable e) {
       throw new UnsupportedOperationException(
-          "Couldn't load native BLS library (from resource " + libLocation + "): ", e);
+          "Couldn't load native library (from resource " + libLocation + "): ", e);
     }
   }
 
