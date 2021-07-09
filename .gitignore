@@ -23,6 +23,7 @@
 hs_err_pid*
 /.idea/
 /build/
+/out/
 /.gradle/
 /msvc/jc-kzg.vcxproj.filters
 /msvc/jc-kzg.vcxproj.user
