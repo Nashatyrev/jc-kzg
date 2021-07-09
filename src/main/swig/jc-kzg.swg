@@ -22,6 +22,23 @@
 %include "arrays_java.i"
 %include "std_vector.i"
 
+// Implement AutoCloseable for wrappers
+
+%typemap(javaimports) SWIGTYPE %{
+import java.lang.AutoCloseable;
+%}
+%typemap(javainterfaces) SWIGTYPE "AutoCloseable"
+%typemap(javacode) SWIGTYPE %{
+  @Override
+  public void close() {
+    delete();
+  }
+%}
+
+%extend std::vector {
+%typemap(javainterfaces) std::vector "AutoCloseable, java.util.RandomAccess";
+};
+
 %template(G1Vector) std::vector<G1>;
 %template(G2Vector) std::vector<G2>;
 %template(FrVector) std::vector<Fr>;
@@ -35,15 +52,11 @@
 #include "poly.hpp"
 %}
 
-// Allow C++ exceptions to be handled in Java
-%typemap(throws) KZGException {
-  jclass excep = jenv->FindClass("tech/pegasys/jckzg/JcKZGException");
-  if (excep)
-    jenv->ThrowNew(excep, $1.what().c_str());
-  return $null;
-}
+// Override equals() and toString() for some classes
 
-%typemap(javacode) Fr %{
+//%typemap(javacode) Fr %{
+%extend Fr {
+%proxycode %{
   public boolean equals(Object obj) {
     if (obj instanceof $javaclassname)
       return (($javaclassname)obj).equal(this);
@@ -58,14 +71,25 @@
         longs.get(0), longs.get(1), longs.get(2), longs.get(3)) ;
   }
 %}
+}
 
-%typemap(javacode) G1 %{
+%extend G1 {
+%proxycode %{
   public byte[] to_compressed() {
     byte[] bytes = new byte[48];
     to_compressed(bytes);
     return bytes;
   }
 %}
+}
+
+// Allow C++ exceptions to be handled in Java
+%typemap(throws) KZGException {
+  jclass excep = jenv->FindClass("tech/pegasys/jckzg/JcKZGException");
+  if (excep)
+    jenv->ThrowNew(excep, $1.what().c_str());
+  return $null;
+}
 
 %ignore FK20Single;
 %ignore FK20Multi;
