@@ -1,5 +1,6 @@
 package tech.pegasys.teku.bls.impl.blst;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -41,7 +42,7 @@ public class JcKZGTest {
 
     List<Fr> frCoeffs = Arrays.stream(coeffs)
         .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
-        .collect(Collectors.toList());
+        .collect(toList());
     Poly poly = new Poly(new FrVector(frCoeffs));
 
     Pair<G1Vector, G2Vector> trustedSetup = TestUtils
@@ -76,7 +77,7 @@ public class JcKZGTest {
         0x4e85fd4814f96825L};
     Fr fr = Fr.from_jlongs(longs);
     LongVector toLongs = fr.to_longs();
-    assertThat(toLongs).containsExactlyElementsOf(Arrays.stream(longs).boxed().collect(Collectors.toList()));
+    assertThat(toLongs).containsExactlyElementsOf(Arrays.stream(longs).boxed().collect(toList()));
   }
 
   @Test
@@ -105,7 +106,7 @@ public class JcKZGTest {
             .mapToObj(i -> Fr.from_jlongs(new long[]{i, 0, 0, 0})),
         Stream.generate(Fr::getZERO)
             .limit(FFT.max_width() / 2))
-        .collect(Collectors.toList());
+        .collect(toList());
     FrVector data = FFT.fft_fr(new FrVector(poly));
 
     FrVector samples = new FrVector(
@@ -140,7 +141,7 @@ public class JcKZGTest {
 
     List<Fr> frs = IntStream.range(0, half)
         .mapToObj(i -> Fr.from_jlongs(new long[]{i, 0, 0, 0}))
-        .collect(Collectors.toList());
+        .collect(toList());
     FrVector data = new FrVector(frs);
 
     FrVector extension = fs.das_fft_extension(data);
@@ -160,12 +161,12 @@ public class JcKZGTest {
       poly = FFT.fft_inverse_fr(data);
       polyEx = new FrVector(
           Stream.concat(poly.stream(), Stream.generate(Fr::getZERO).limit(poly.size()))
-              .collect(Collectors.toList()));
+              .collect(toList()));
       fullData = FFT.fft_fr(polyEx);
       return new FrVector(IntStream.range(0, fullData.size())
           .filter(i -> i % 2 != 0)
           .mapToObj(fullData::get)
-          .collect(Collectors.toList()));
+          .collect(toList()));
     } finally {
       if (poly != null) poly.delete();
       if (polyEx != null) polyEx.delete();
@@ -182,7 +183,7 @@ public class JcKZGTest {
 
     List<Fr> frDataList = Arrays.stream(dataArr)
         .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
-        .collect(Collectors.toList());
+        .collect(toList());
 
     FrVector evenData = new FrVector(frDataList);
     FrVector oddData = FFT.das_fft_extension(evenData);
@@ -190,12 +191,12 @@ public class JcKZGTest {
     List<Fr> allSamples = IntStream
         .range(0, evenData.size() * 2)
         .mapToObj(i -> i % 2 == 0 ? evenData.get(i / 2) : oddData.get(i / 2))
-        .collect(Collectors.toList());
+        .collect(toList());
 
     List<Fr> someSamples = IntStream
         .range(0, allSamples.size())
         .mapToObj(i -> i % 3 == 0 ? Fr.getNULL_FR() : allSamples.get(i))
-        .collect(Collectors.toList());
+        .collect(toList());
     FrVector restoredData = FFT.recover_poly_from_samples(new FrVector(someSamples));
 
     assertThat(restoredData).hasSize(allSamples.size());
@@ -219,7 +220,7 @@ public class JcKZGTest {
 
     List<Fr> frCoeffs = Arrays.stream(coeffs)
         .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
-        .collect(Collectors.toList());
+        .collect(toList());
     Poly poly = new Poly(new FrVector(frCoeffs));
 
     Pair<G1Vector, G2Vector> trustedSetup = TestUtils
@@ -260,7 +261,7 @@ public class JcKZGTest {
 
     List<Fr> frCoeffs = Arrays.stream(coeffs)
         .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
-        .collect(Collectors.toList());
+        .collect(toList());
     Poly poly = new Poly(new FrVector(frCoeffs));
 
     Pair<G1Vector, G2Vector> trustedSetup = TestUtils
@@ -285,7 +286,7 @@ public class JcKZGTest {
     List<Fr> extendedCoeffs = Stream.concat(
         frCoeffs.stream(),
         Stream.generate(Fr::getZERO).limit(frCoeffs.size())
-    ).collect(Collectors.toList());
+    ).collect(toList());
     FrVector extendedCoeffsFftOrdered = fft.fft_fr(new FrVector(extendedCoeffs));
     List<Fr> extendedCoeffsFft = reverseBitOrderList(extendedCoeffsFftOrdered);
 
@@ -303,7 +304,77 @@ public class JcKZGTest {
       int stride = (int) (fft.max_width() / chunkLen);
       List<Fr> ys2 = IntStream.range(0, chunkLen)
           .mapToObj(i -> poly.eval(x.mul(fft.expanded_root_of_unity(i * stride))))
-          .collect(Collectors.toList());
+          .collect(toList());
+
+      assertThat(ys).isEqualTo(ys2);
+
+      assertThat(kzg.check_proof_multi(commitment, proofs.get(pos), x, new FrVector(ys))).isTrue();
+    }
+  }
+
+  @Test
+  void fk20ProofMulti1() {
+    int chunkLen = 8;
+    int chunkCount = 4;
+    int n = chunkLen * chunkCount;
+    long[] data = LongStream.range(0, n).toArray();
+    int polyLen = data.length;
+    int secretsLen = n * 2;
+
+    System.out.println("Started");
+
+    Pair<G1Vector, G2Vector> trustedSetup = TestUtils
+        .generateTrustedSetup(TestUtils.SECRET, secretsLen);
+    G1Vector s1 = trustedSetup.getLeft();
+    G2Vector s2 = trustedSetup.getRight();
+    System.out.println("Secret vectors generated");
+
+    FFT fft = new FFT(2 + 3 + 1);
+    System.out.println("FFT created.");
+    KZG kzg = new KZG(fft, s1, s2);
+    System.out.println("KZG created.");
+    FK20 fk20 = FK20.create_multi(kzg, 2 * polyLen, chunkLen);
+    System.out.println("FK20 created.");
+
+
+    List<Fr> frData = Arrays.stream(data)
+        .mapToObj(l -> Fr.from_jlongs(new long[]{l, 0, 0, 0}))
+        .collect(toList());
+    List<Fr> revData = reverseBitOrderList(frData);
+    FrVector revExtData = fft.das_fft_extension(new FrVector(revData));
+    assertThat(revExtData).hasSize(frData.size());
+    List<Fr> extData = reverseBitOrderList(revExtData);
+    List<Fr> allData = Stream.concat(frData.stream(), extData.stream()).collect(toList());
+
+    List<Fr> revAllData = reverseBitOrderList(allData);
+    FrVector extCoeffs = fft.fft_inverse_fr(new FrVector(revAllData));
+    assertThat(extCoeffs.subList(extCoeffs.size() / 2, extCoeffs.size())).allMatch(Fr::is_zero);
+
+    List<Fr> frCoeffs = extCoeffs.subList(0, extCoeffs.size() / 2);
+
+    Poly poly = new Poly(new FrVector(frCoeffs));
+
+    G1 commitment = kzg.commit_to_poly(poly);
+    System.out.println("Poly commitment calculated.");
+
+    G1Vector proofs = fk20.da_calc_proofs(poly);
+    System.out.println("Proofs calculated.");
+
+    int domainStride = (int) (fft.max_width() / (2 * n));
+
+    for (int pos = 0; pos < 2 * chunkCount; pos++) {
+      int domainPos = reverseBitOrder(pos, 2 * chunkCount);
+      Fr x = fft.expanded_root_of_unity(domainPos * domainStride);
+
+      // The ys from the extended coeffients
+      List<Fr> ysOrdered = allData.subList(chunkLen * pos, chunkLen * (pos + 1));
+      List<Fr> ys = reverseBitOrderList(ysOrdered);
+
+      // Now recreate the ys by evaluating the polynomial in the sub-domain range
+      int stride = (int) (fft.max_width() / chunkLen);
+      List<Fr> ys2 = IntStream.range(0, chunkLen)
+          .mapToObj(i -> poly.eval(x.mul(fft.expanded_root_of_unity(i * stride))))
+          .collect(toList());
 
       assertThat(ys).isEqualTo(ys2);
 
