@@ -2,7 +2,7 @@
 #define ___KZG_HPP___
 
 extern "C" {
-	#include "kzg_proofs.h"
+	#include "c_kzg.h"
 }
 #include "fft.hpp"
 #include "bls12_381.hpp"

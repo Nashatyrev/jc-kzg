@@ -1,10 +1,5 @@
 extern "C" {
-#include "fft_fr.h"
-#include "fft_common.h"
 #include "c_kzg.h"
-#include "zero_poly.h"
-#include "recover.h"
-#include "das_extension.h"
 }
 #include <vector>
 #include "poly.hpp"
@@ -57,12 +52,6 @@ public:
         std::vector<Fr> r(samples);
         CKZG_TRY(::recover_poly_from_samples((fr_t*)&r[0], (fr_t*)&samples[0], samples.size(), &settings));
         return r;
-    }
-
-    Poly* do_zero_poly_mul_partial(std::vector<long long> indices, int64_t stride) throw(KZGException) {
-        Poly* ret = new Poly();
-        CKZG_TRY(::do_zero_poly_mul_partial(&(ret->_poly), (uint64_t*)indices[0], indices.size(), stride, &settings));
-        return ret;
     }
 
     long long max_width() {

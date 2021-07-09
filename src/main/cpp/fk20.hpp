@@ -2,7 +2,7 @@
 #define ___FK20_HPP___
 
 extern "C" {
-#include "fk20_proofs.h"
+#include "c_kzg.h"
 }
 
 #include <vector>

@@ -1,5 +1,5 @@
 extern "C" {
-#include "poly.h"
+#include "c_kzg.h"
 }
 #include <vector>
 #include "bls12_381.hpp"
@@ -32,7 +32,7 @@ public:
 
 	Poly* long_div(Poly *divisor) throw(KZGException) {
 		Poly* ret = new Poly();
-		CKZG_TRY(::poly_long_div(&ret->_poly, &_poly, &divisor->_poly));
+		CKZG_TRY(::new_poly_div(&ret->_poly, &_poly, &divisor->_poly));
 		return ret;
 	}
 
