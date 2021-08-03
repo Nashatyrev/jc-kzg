@@ -16,6 +16,7 @@ class Fr {
 	friend class FFT;
 	friend class G1;
 	friend class G2;
+	friend class BLS12_381;
 
 private: 
 	fr_t fr;
@@ -98,6 +99,7 @@ class G1 {
 	friend class KZG;
 	friend class FK20Single;
 	friend class FK20Multi;
+	friend class BLS12_381;
 private:
 	g1_t g1;
 
@@ -157,6 +159,7 @@ const G1 G1::NEGATIVE_GENERATOR= G1(g1_negative_generator);
 class G2 {
 	friend class Poly;
 	friend class KZG;
+	friend class BLS12_381;
 private:
 	g2_t g2;
 
@@ -194,5 +197,12 @@ public:
 
 const G2 G2::GENERATOR = G2(g2_generator);
 const G2 G2::NEGATIVE_GENERATOR = G2(g2_negative_generator);
+
+class BLS12_381 {
+public:
+	static bool pairings_verify(G1 a1, G2 a2, G1 b1, G2 b2) {
+		return ::pairings_verify(&a1.g1, &a2.g2, &b1.g1, &b2.g2);
+	}
+};
 
 #endif // !___POLY_HPP___
