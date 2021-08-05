@@ -37,7 +37,7 @@ public:
 		CKZG_TRY(::compute_proof_single(&ret.g1, &poly->_poly, &x0.fr, &settings));
 		return ret;
 	}
-	G1 compute_proof_poly(Poly* poly, std::vector<Fr> x0) throw(KZGException) {
+	G1 compute_proof_multi(Poly* poly, std::vector<Fr> x0) throw(KZGException) {
 		G1 ret;
 		CKZG_TRY(::compute_proof_multi(&ret.g1, &poly->_poly, (fr_t*) &x0[0], x0.size(), &settings));
 		return ret;
