@@ -43,7 +43,7 @@ class FK20Multi: public FK20 {
 private:
 	FK20MultiSettings _settings;
 public:
-	FK20Multi(KZG* kzg, long long n2, long long chunk_len) {
+	FK20Multi(KZG* kzg, long long n2, long long chunk_len) throw (KZGException) {
 		CKZG_TRY(new_fk20_multi_settings(&_settings, n2, chunk_len, &kzg->settings));
 	}
 	std::vector<G1> da_calc_proofs(Poly* poly) throw (KZGException) {

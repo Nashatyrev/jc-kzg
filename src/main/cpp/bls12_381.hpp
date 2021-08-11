@@ -117,6 +117,14 @@ public:
 	static G1 from_compressed(const signed char arr[48]) throw(KZGException) {
 		return G1((byte*)arr);
 	}
+	static G1 linear_combination(std::vector<G1> g1s, std::vector<Fr> coeffs) {
+		if (coeffs.size() == 0) return IDENTITY;
+
+		G1 ret;
+		g1_linear_combination(&ret.g1, (g1_t*)&g1s[0], (fr_t*)&coeffs[0], coeffs.size());
+		return ret;
+	}
+
 	G1() {}
 
 	bool is_inf() { return g1_is_inf(&g1); };
@@ -139,11 +147,6 @@ public:
 	G1 sub(const G1 b) {
 		G1 ret;
 		g1_sub(&ret.g1, &g1, &b.g1);
-		return ret;
-	}
-	G1 linear_combination(std::vector<Fr> coeffs) {
-		G1 ret;
-		g1_linear_combination(&ret.g1, &g1, (fr_t*)&coeffs[0], coeffs.size());
 		return ret;
 	}
 	void to_compressed(signed char out[48]) {
@@ -181,6 +184,11 @@ public:
 	G2 mul(const Fr b) {
 		G2 ret;
 		g2_mul(&ret.g2, &g2, &b.fr);
+		return ret;
+	}
+	G2 add_or_dbl(const G2 b) {
+		G2 ret;
+		g2_add_or_dbl(&ret.g2, &g2, &b.g2);
 		return ret;
 	}
 	G2 sub(const G2 b) {
