@@ -187,7 +187,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\blst\bindings;..\src\main\cpp;..\c-kzg\src;$(JDK_DIR)\include;$(JDK_DIR)\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <PreprocessorDefinitions>DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG;JCKZG_MSVC_TEST</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -226,7 +226,7 @@
     <ClCompile Include="..\c-kzg\src\utility.c" />
     <ClCompile Include="..\c-kzg\src\zero_poly.c" />
     <ClCompile Include="..\src\generated\cpp\jc-kzg.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\src\test\cpp\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
